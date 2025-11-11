@@ -1,0 +1,30 @@
+baseURL = 'http://localhost:1313/'
+languageCode = 'en-us'
+title = 'skarabe'
+enableGitInfo = true
+
+[params]
+  knowledgeTitle = "Knowledge Base"
+  showBlinkingCaret = true  # Show blinking caret after title
+  gitUrl = "https://github.com/yourusername/your-repo.git"
+  gitBranch = "main"  # Default branch for edit links (main, master, etc.)
+
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[outputFormats]
+  [outputFormats.JSON]
+    mediaType = "application/json"
+    baseName = "index"
+    isPlainText = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 5
+    ordered = false

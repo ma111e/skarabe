@@ -1,0 +1,142 @@
+/* Tag filter chips - shown below section tabs */
+
+.tags-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: .5rem 0;
+}
+
+.tags-filter-container[hidden] {
+  display: none;
+}
+
+.tags-filter-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.tag-filters {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+}
+
+.tag-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  /* border: 1.5px solid var(--color-primary); */
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+/* 
+  background: var(--color-card);
+  color: var(--color-primary); */
+  padding: 0.25rem 0.5rem 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.1rem;
+  cursor: pointer;
+  /* transition: all 0.15s ease; */
+  will-change: opacity, transform;
+}
+
+.tag-chip:hover {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  /* box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15); */
+  /* transform: translateY(-1px); */
+}
+
+.tag-chip:active {
+  /* transform: translateY(0) scale(0.96); */
+}
+
+.tag-chip:focus-visible {
+  outline: none;
+  /* box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); */
+}
+
+.tag-chip-label {
+  user-select: none;
+}
+
+.tag-chip-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  /* opacity: 0.7; */
+  /* transition: opacity 0.15s ease; */
+}
+
+.tag-chip:hover .tag-chip-close {
+  /* opacity: 1; */
+}
+
+.tag-chip-close svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
+
+/* Clear all button - different style */
+.tag-chip-clear-all {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  background: transparent;
+  padding: 0.25rem 0.65rem;
+  font-weight: 500;
+}
+
+.tag-chip-clear-all:hover {
+  background: var(--color-hover);
+  color: var(--color-text);
+  border-color: var(--color-hover-border);
+  box-shadow: none;
+  transform: none;
+}
+
+.tag-chip-clear-all:active {
+  transform: scale(0.96);
+}
+
+/* Differentiate sections (tabs) from tag filters */
+#tag-cloud {
+  position: static;
+  margin-bottom: 0.5rem;
+}
+
+#tag-cloud .tabs {
+  padding: 0;
+  gap: 0.5rem;
+}
+
+#tag-cloud .tab {
+  /* Sections use rounded rectangles instead of full pills */
+  border-radius: 8px;
+  font-weight: 500;
+  /* opacity: 0; */
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .tags-filter-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .tags-filter-label {
+    margin-bottom: 0.25rem;
+  }
+}

@@ -1,0 +1,16 @@
+[
+ {{- $pages := where .Site.Pages "Kind" "in" (slice "page" "section") -}}
+
+ {{- $pages = sort $pages "Lastmod" "desc" -}}
+ {{- $len := sub (len $pages) 1 -}}
+ {{- range $i, $p := $pages -}}
+  {
+    "title": {{ $p.Title | jsonify }},
+    "url": {{ $p.RelPermalink | jsonify }},
+    "section": {{ $p.Section | jsonify }},
+    "kind": {{ $p.Kind | jsonify }},
+    "tags": {{ $p.Params.tags | default (slice) | jsonify }},
+    "content": {{ $p.Plain | jsonify }}
+  }{{ if lt $i $len }},{{ end }}
+ {{- end -}}
+]

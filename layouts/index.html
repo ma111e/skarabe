@@ -1,0 +1,22 @@
+{{- define "styles" -}}
+  {{- partial "styles/search.html" . -}}
+{{- end -}}
+
+{{- define "scripts" -}}
+  {{- partial "scripts/search.html" . -}}
+{{- end -}}
+
+{{- define "extra-body" -}}
+  {{- partial "search/loading.html" . -}}
+{{- end -}}
+
+{{- define "main" -}}
+  <main>
+    {{- partial "search/ui.html" . -}}
+    {{- if .Content -}}
+    <div class="content">
+      {{ .Content }}
+    </div>
+    {{- end -}}
+  </main>
+{{- end -}}

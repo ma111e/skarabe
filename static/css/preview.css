@@ -1,0 +1,83 @@
+/* Preview popup */
+#preview-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-backdrop);
+  z-index: 9998;
+  opacity: 0;
+  display: none;
+  transition: opacity 0.2s ease;
+}
+
+#preview-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 1400px;
+  height: 90vh;
+  background: var(--color-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  opacity: 0;
+  display: none;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+#preview-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  border-bottom: 1px solid var(--color-border);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+#preview-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+#preview-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-muted-foreground);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+#preview-close:hover {
+  background: var(--color-hover);
+  color: var(--color-foreground);
+}
+
+#preview-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+#preview-iframe {
+  width: 100%;
+  height: calc(100% - 48px);
+  border: none;
+  margin-top: 48px;
+  background: var(--color-background);
+}
+

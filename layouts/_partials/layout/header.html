@@ -1,0 +1,94 @@
+<header>
+    <div class="title">
+        <a href="{{ "/" | relLangURL }}" class="text-inherit no-underline">{{ .Site.Title }}</a>
+        {{ if .Site.Params.showBlinkingCaret }}<span class="blinking-caret"></span>{{ end }}
+    </div>
+    <div class="mx-auto"></div>
+    {{ $hasGit := .Site.Params.gitUrl }}
+    {{ $gitBase := cond (and $hasGit (in .Site.Params.gitUrl ".git")) (replace .Site.Params.gitUrl ".git" "")
+    .Site.Params.gitUrl }}
+    {{ $browseUrl := $gitBase }}
+    {{/* Build edit URL for single pages (configurable branch, default: main) */}}
+    {{ $gitBranch := default "main" .Site.Params.gitBranch }}
+    {{ $editUrl := $gitBase }}
+    {{ if and $hasGit .IsPage }}
+    {{ $path := .File.Path }}
+    {{ if in $gitBase "github.com" }}
+    {{ $editUrl = printf "%s/edit/%s/content/%s" $gitBase $gitBranch $path }}
+    {{ else if in $gitBase "gitlab.com" }}
+    {{ $editUrl = printf "%s/-/edit/%s/content/%s" $gitBase $gitBranch $path }}
+    {{ else }}
+    {{ $editUrl = printf "%s/content/%s" $gitBase $path }}
+    {{ end }}
+    {{ end }}
+
+    {{ if and $hasGit .IsPage }}
+    <button id="edit-link-button" class="cursor-pointer" type="button" aria-label="Edit this page"
+        title="Edit this page" onclick="window.location.href='{{ $editUrl }}'">
+        <span class="sr-only">Edit</span>
+        <span>Edit</span>
+    </button>
+    {{ end }}
+
+    {{ if not (and $hasGit .IsPage) }}
+
+    <button id="git-link-button" class="cursor-pointer mr-1" type="button" aria-label="Git" title="Git" {{ if $editUrl
+        }}onclick="window.location.href='{{ $editUrl }}'" {{ end }}>
+        {{ if $hasGit }}
+        {{ if in .Site.Params.gitUrl "github.com" }}
+        <span aria-hidden="true" id="github-link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-github-icon lucide-github">
+                <path
+                    d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                <path d="M9 18c-4.51 2-5-2-7-2" />
+            </svg>
+        </span>
+        {{ else if in .Site.Params.gitUrl "gitlab.com" }}
+        <span aria-hidden="true" id="gitlab-link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-gitlab-icon lucide-gitlab">
+                <path
+                    d="m22 13.29-3.33-10a.42.42 0 0 0-.14-.18.38.38 0 0 0-.22-.11.39.39 0 0 0-.23.07.42.42 0 0 0-.14.18l-2.26 6.67H8.32L6.1 3.26a.42.42 0 0 0-.1-.18.38.38 0 0 0-.26-.08.39.39 0 0 0-.23.07.42.42 0 0 0-.14.18L2 13.29a.74.74 0 0 0 .27.83L12 21l9.69-6.88a.71.71 0 0 0 .31-.83Z" />
+            </svg>
+        </span>
+        {{ else }}
+        <span aria-hidden="true" id="git-link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-git-fork-icon lucide-git-fork">
+                <circle cx="12" cy="18" r="3" />
+                <circle cx="6" cy="6" r="3" />
+                <circle cx="18" cy="6" r="3" />
+                <path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9" />
+                <path d="M12 12v3" />
+            </svg>
+        </span>
+        {{ end }}
+        {{ end }}
+        <span class="sr-only">Open repository</span>
+    </button>
+    {{ end }}
+
+    <div class="settings">
+        <button id="settings-button" class="cursor-pointer" type="button" aria-label="Settings" title="Settings" aria-haspopup="menu" aria-expanded="false">
+            <span class="sr-only">Settings</span>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>            </span>
+        </button>
+        <div id="settings-menu" role="menu" hidden>
+            <button id="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme" role="menuitem">
+                <span aria-hidden="true" id="theme-icon"></span>
+                <span>Toggle theme</span>
+            </button>
+            <button id="clear-storage" type="button" aria-label="Clear storage" title="Clear storage" role="menuitem">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brush-cleaning-icon lucide-brush-cleaning"><path d="m16 22-1-4"/><path d="M19 13.99a1 1 0 0 0 1-1V12a2 2 0 0 0-2-2h-3a1 1 0 0 1-1-1V4a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2v.99a1 1 0 0 0 1 1"/><path d="M5 14h14l1.973 6.767A1 1 0 0 1 20 22H4a1 1 0 0 1-.973-1.233z"/><path d="m8 22 1-4"/></svg>
+                <span>Clear storage</span>
+            </button>
+            <button id="toggle-animations" type="button" aria-label="Disable animations" title="Disable animations" role="menuitem">
+                <span>Disable animations</span>
+            </button>
+        </div>
+    </div>
+</header>

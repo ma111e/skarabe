@@ -1,0 +1,59 @@
+/* Tabs container in sidebar sticks while scrolling */
+aside .tabs-container {
+  position: sticky;
+  top: 7rem; /* adjust to your header height */
+}
+
+/* Horizontal chips */
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  appearance: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  opacity: 0;
+  color: var(--color-foreground);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px; /* pill */
+  font-size: 0.8rem;
+  line-height: 1.1rem;
+  cursor: pointer;
+  gap: 0.35rem;
+}
+
+/* When animations are disabled, ensure initially-hidden elements are visible */
+html.no-animations .tab { opacity: 1 !important; }
+
+.tab:hover {
+  background: var(--color-accent);
+}
+
+.tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
+}
+
+.tab.active,
+.tab[aria-pressed="true"] {
+  background: var(--color-active-background);
+  color: var(--color-foreground-active);
+  border-color: var(--color-hover-border);
+}
+
+/* Sidebar stacks vertically on large screens; tag cloud stays inline */
+@media (min-width: 1024px) {
+  aside .tabs-container {
+    width: 220px;
+  }
+  aside .tabs {
+    flex-direction: column;
+  }
+  aside .tab {
+    border-radius: 9999px;
+    text-align: left;
+  }
+}

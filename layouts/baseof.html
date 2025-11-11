@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html class="dark" lang="{{ .Site.Language.Lang }}" dir="{{ .Site.Language.LanguageDirection | default `ltr` }}">
+
+<head>
+  {{- partial "head/index-fingerprint.html" . -}}
+  {{- partial "head/common.html" . -}}
+  {{- block "styles" . -}}
+    {{- partial "styles/article.html" . -}}
+  {{- end -}}
+  {{- block "scripts" . -}}
+    {{- partial "scripts/article.html" . -}}
+  {{- end -}}
+</head>
+
+<body>
+  {{- partial "layout/shell.html" . -}}
+  <div class="content-wrap">
+    {{- block "main" . }}{{ end -}}
+  </div>
+  </div>
+  {{- block "extra-body" . -}}{{- end -}}
+</body>
+
+</html>

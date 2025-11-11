@@ -1,0 +1,29 @@
+{{- partial "layout/header.html" . -}}
+<!-- Preview popup -->
+<div id="preview-backdrop"></div>
+<div id="preview-container">
+  <div id="preview-header">
+    <div id="preview-title">Preview</div>
+    <button id="preview-close" type="button" aria-label="Close preview">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </div>
+  <iframe id="preview-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+</div>
+<div class="layout">
+  <aside class="sidebar" aria-label="Sidebar">
+    {{- if .IsPage -}}
+      <div class="toc px-2">
+        <h3 class="px-1 mb-2 font-semibold tracking-widest text-gray-400">Table of Contents</h3>
+        <div class="prose dark:prose-invert max-w-none">
+          {{ .TableOfContents }}
+        </div>
+      </div>
+    {{- else -}}
+      {{- partial "layout/sidebar.html" . -}}
+    {{- end -}}
+  </aside>

@@ -1,0 +1,87 @@
+{{ define "main" }}
+  <main id="article-main" class="max-w-4xl mx-auto px-6 py-8" style="opacity: 0;">
+    <article class="prose prose-lg dark:prose-invert max-w-none">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb mb-6" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <li>
+            <a href="{{ "/" | relLangURL }}" class="hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </a>
+          </li>
+          {{ with .Section }}
+          <li class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <a href="/{{ . | urlize }}/" class="font-medium hover:text-gray-900 dark:hover:text-gray-100 transition-colors">{{ . | humanize }}</a>
+          </li>
+          {{ end }}
+          {{ if .Title }}
+          <li class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="text-gray-900 dark:text-gray-100">{{ .Title }}</span>
+          </li>
+          {{ end }}
+        </ol>
+      </nav>
+      
+      <div class="article-header mb-8 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="header-grid w-full">
+
+          {{ if .Title }}
+          <div class="header-title">
+            <h1 class="article-title font-bold text-gray-900 dark:text-gray-100">{{ .Title }}</h1>
+          </div>
+          {{ end }}
+          
+          {{ with .Section }}
+          <div class="header-section">
+            <div class="section-badge flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+              <span class="font-medium">{{ . | humanize }}</span>
+            </div>
+          </div>
+          {{ end }}
+          
+          {{ with .Params.tags }}
+          <div class="header-tags">
+            <div class="flex flex-wrap gap-2 justify-end">
+              {{ range . }}
+              <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300">
+                {{ . }}
+              </span>
+              {{ end }}
+            </div>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+      
+      <div class="content">
+        {{ .Content }}
+      </div>
+      <div class="header-date">
+            {{ $last := .Lastmod }}
+            {{ with $last }}
+            <div class="updated-badge italic mt-1 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+              <time datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+                <span>Last updated <span class="font-medium">{{ .Format "January 2, 2006, at 15:04" }}</span></span>
+              </time>
+            </div>
+            {{ end }}
+      </div>
+    </article>
+  </main>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const main = document.getElementById('article-main');
+      if (!main || document.documentElement.classList.contains('no-animations')) return;
+
+      Motion.animate(
+        main,
+        { opacity: [0, 1] },
+        { duration: 0.2, delay: 0.1, easing: [0.22, 0.61, 0.36, 1] }
+      );
+    });
+  </script>
+{{ end }}

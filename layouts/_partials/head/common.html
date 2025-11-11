@@ -1,0 +1,17 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>
+  {{- if .IsHome -}}
+  {{ .Site.Title -}}
+  {{ else -}}
+  {{ with .Title }}{{ . }} – {{ end -}}
+  {{ .Site.Title -}}
+  {{ end -}}
+</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@12.23.24/dist/motion.min.js"></script>
+<script src="/js/lib/settings.js"></script>
+<link rel="stylesheet" href="/css/theme.css" />
+<link rel="stylesheet" href="/css/sidebar-tree.css" />
+<link rel="stylesheet" href="/css/preview.css" />
+<link rel="stylesheet" href="/css/single.css" />

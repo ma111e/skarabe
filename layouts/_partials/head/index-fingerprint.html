@@ -1,0 +1,22 @@
+{{- /* 
+  Generate index.json fingerprint at build time
+  Creates the same content as index.json and computes SHA256 hash
+  This hash changes only when the actual index content changes
+*/ -}}
+{{- $pages := where .Site.Pages "Kind" "in" (slice "page" "section") -}}
+{{- $pages = sort $pages "Lastmod" "desc" -}}
+{{- /* Build the exact same JSON structure as index.json */ -}}
+{{- $indexArray := slice -}}
+{{- range $pages -}}
+  {{- $item := dict "title" .Title "url" .RelPermalink "section" .Section "kind" .Kind "tags" (.Params.tags | default slice) "content" .Plain -}}
+  {{- $indexArray = $indexArray | append $item -}}
+{{- end -}}
+{{- /* Convert to JSON string and compute SHA256 hash */ -}}
+{{- $indexJSON := $indexArray | jsonify -}}
+{{- $fingerprint := crypto.SHA256 $indexJSON -}}
+<script>
+/* Index fingerprint generated at build time by Hugo */
+/* Computed from actual index.json content using crypto.SHA256 */
+window.INDEX_FINGERPRINT = {{ $fingerprint }};
+window.INDEX_BUILD_TIME = {{ now.Unix }};
+</script>

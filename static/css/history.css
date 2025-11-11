@@ -1,0 +1,60 @@
+#search-history {
+  position: absolute;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  list-style: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  max-width: 80ch;
+  /* Show ~6 items and allow scroll for more */
+  max-height: calc(10 * 2.25rem);
+  overflow-y: auto;
+  padding-right: 4px;
+  /* avoid scrollbar overlay */
+}
+
+/* When animations are disabled, ensure initially-hidden elements are visible */
+html.no-animations .search-history li {
+  opacity: 1 !important;
+}
+
+.search-history li {
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.history-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px !important;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.history-btn:active {
+  transform: scale(0.99) !important;
+}
+
+.history-btn:hover,
+.history-btn:focus {
+  background: var(--color-hover);
+  outline: none;
+}
+
+.history-icon {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+}

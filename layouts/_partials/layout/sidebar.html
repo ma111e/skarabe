@@ -1,0 +1,186 @@
+{{- /* Build sidebar navigation tree at build time */ -}}
+{{- $pages := where .Site.Pages "Kind" "eq" "page" -}}
+{{- $sections := slice -}}
+{{- $sectionMap := dict -}}
+
+{{- /* Group pages by section */ -}}
+{{- range $pages -}}
+  {{- if .Section -}}
+    {{- $section := .Section -}}
+    {{- if not (index $sectionMap $section) -}}
+      {{- $sections = $sections | append $section -}}
+      {{- $sectionMap = merge $sectionMap (dict $section (slice)) -}}
+    {{- end -}}
+    {{- $sectionPages := index $sectionMap $section -}}
+    {{- $sectionPages = $sectionPages | append . -}}
+    {{- $sectionMap = merge $sectionMap (dict $section $sectionPages) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Sort sections alphabetically */ -}}
+{{- $sections = sort $sections -}}
+
+{{- /* Function to build tree from URL segments */ -}}
+{{- define "build-tree-node" -}}
+  {{- $pages := .pages -}}
+  {{- $depth := .depth | default 0 -}}
+  {{- $maxDepth := 3 -}}
+  
+  {{- if le $depth $maxDepth -}}
+    {{- /* Group pages by first segment of remaining path */ -}}
+    {{- $tree := dict -}}
+    
+    {{- range $pages -}}
+      {{- $relPath := strings.TrimPrefix (printf "/%s/" $.section) .RelPermalink -}}
+      {{- $relPath = strings.TrimSuffix "/" $relPath -}}
+      {{- $segments := split $relPath "/" -}}
+      {{- $segments = where $segments "!=" "" -}}
+      
+      {{- if gt (len $segments) 0 -}}
+        {{- $firstSeg := index $segments 0 -}}
+        {{- if not (index $tree $firstSeg) -}}
+          {{- $tree = merge $tree (dict $firstSeg (dict "pages" (slice) "segments" (slice))) -}}
+        {{- end -}}
+        {{- $node := index $tree $firstSeg -}}
+        {{- $nodePages := index $node "pages" -}}
+        {{- $nodePages = $nodePages | append . -}}
+        {{- $node = merge $node (dict "pages" $nodePages) -}}
+        {{- $tree = merge $tree (dict $firstSeg $node) -}}
+      {{- else -}}
+        {{- /* Root level page */ -}}
+        {{- $key := "_root" -}}
+        {{- if not (index $tree $key) -}}
+          {{- $tree = merge $tree (dict $key (dict "pages" (slice))) -}}
+        {{- end -}}
+        {{- $node := index $tree $key -}}
+        {{- $nodePages := index $node "pages" -}}
+        {{- $nodePages = $nodePages | append . -}}
+        {{- $node = merge $node (dict "pages" $nodePages) -}}
+        {{- $tree = merge $tree (dict $key $node) -}}
+      {{- end -}}
+    {{- end -}}
+    
+    {{- return $tree -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Render tree node - simplified */ -}}
+{{- define "render-node" -}}
+  {{- $key := .key -}}
+  {{- $node := .node -}}
+  {{- $section := .section -}}
+  {{- $pages := index $node "pages" | default (slice) -}}
+  {{- $nodeDepth := index $node "depth" | default 1 -}}
+  
+  {{- /* If depth is 1, it's a direct page file */ -}}
+  {{- if and (eq $nodeDepth 1) (eq (len $pages) 1) -}}
+    {{- $page := index $pages 0 -}}
+    <a href="{{ $page.RelPermalink }}" class="sidebar-link flex items-center gap-2 px-2 py-1.5 w-full">
+      <svg class="w-4 h-4 stroke-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>
+        <path d="M14 2v5a1 1 0 0 0 1 1h5"/>
+      </svg>
+      <span>{{ $page.Title }}</span>
+    </a>
+  {{- else if gt (len $pages) 0 -}}
+    {{- /* It's a folder with multiple pages */ -}}
+    <details class="sidebar-details">
+      <summary class="sidebar-folder flex items-center gap-2 px-2 py-1.5 rounded w-full cursor-pointer">
+        <svg class="w-4 h-4 stroke-current fill-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+        </svg>
+        <span>{{ $key }}</span>
+        <svg class="w-4 h-4 ml-auto shrink-0 transition-transform duration-200 chevron-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </summary>
+      <ul class="sidebar-list pl-3">
+        {{- /* Group pages by next segment for subfolders */ -}}
+        {{- $subtree := dict -}}
+        {{- range $pages -}}
+          {{- $relPath := strings.TrimPrefix (printf "/%s/" $section) .RelPermalink -}}
+          {{- $relPath = strings.TrimSuffix "/" $relPath -}}
+          {{- $segments := split $relPath "/" -}}
+          {{- $segments = where $segments "!=" "" -}}
+          
+          {{- if eq (len $segments) 2 -}}
+            {{- /* Direct page in this folder */ -}}
+            {{- $pageKey := printf "page_%s" .File.UniqueID -}}
+            {{- if not (index $subtree $pageKey) -}}
+              {{- $subtree = merge $subtree (dict $pageKey (dict "pages" (slice) "isPage" true)) -}}
+            {{- end -}}
+            {{- $subnode := index $subtree $pageKey -}}
+            {{- $subnodePages := index $subnode "pages" -}}
+            {{- $subnodePages = $subnodePages | append . -}}
+            {{- $subnode = merge $subnode (dict "pages" $subnodePages "isPage" true) -}}
+            {{- $subtree = merge $subtree (dict $pageKey $subnode) -}}
+          {{- else if gt (len $segments) 2 -}}
+            {{- /* Nested subfolder */ -}}
+            {{- $nextSeg := index $segments 1 -}}
+            {{- if not (index $subtree $nextSeg) -}}
+              {{- $subtree = merge $subtree (dict $nextSeg (dict "pages" (slice) "isPage" false)) -}}
+            {{- end -}}
+            {{- $subnode := index $subtree $nextSeg -}}
+            {{- $subnodePages := index $subnode "pages" -}}
+            {{- $subnodePages = $subnodePages | append . -}}
+            {{- $subnode = merge $subnode (dict "pages" $subnodePages "isPage" false) -}}
+            {{- $subtree = merge $subtree (dict $nextSeg $subnode) -}}
+          {{- end -}}
+        {{- end -}}
+        
+        {{- range $subKey, $subNode := $subtree -}}
+          {{- $isPage := index $subNode "isPage" | default false -}}
+          {{- if $isPage -}}
+            {{- $subPages := index $subNode "pages" -}}
+            {{- range $subPages -}}
+              <li>
+                <a href="{{ .RelPermalink }}" class="sidebar-link flex items-center gap-2 px-2 py-1.5 w-full">
+                  <svg class="w-4 h-4 stroke-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>
+                    <path d="M14 2v5a1 1 0 0 0 1 1h5"/>
+                  </svg>
+                  <span>{{ .Title }}</span>
+                </a>
+              </li>
+            {{- end -}}
+          {{- else -}}
+            <li>
+              {{- template "render-node" (dict "key" $subKey "node" $subNode "section" $section) -}}
+            </li>
+          {{- end -}}
+        {{- end -}}
+      </ul>
+    </details>
+  {{- end -}}
+{{- end -}}
+
+<nav id="sidebar-tree">
+  <div id="sidebar-search" class="mb-4 pr-4 top-0 z-10">
+    <label for="sidebar-filter" class="sr-only">Filter</label>
+    <input id="sidebar-filter" type="text" placeholder="Filter..." autocomplete="off" class="w-full px-2 py-1.5 rounded text-sm" />
+  </div>
+  <div id="sidebar-sections">
+    {{- range $sections -}}
+      {{- $section := . -}}
+      {{- $sectionPages := index $sectionMap $section -}}
+      
+      <h3 class="px-1 mb-1 font-semibold tracking-widest text-gray-400">
+        <a href="/{{ $section | urlize }}">{{ $section | humanize | title }}</a>
+      </h3>
+      
+      <ul class="space-y-1 mr-2">
+        {{- range $sectionPages -}}
+          <li>
+            <a href="{{ .RelPermalink }}" class="sidebar-link flex items-center gap-2 px-2 py-1.5 w-full">
+              <svg class="w-4 h-4 stroke-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>
+                <path d="M14 2v5a1 1 0 0 0 1 1h5"/>
+              </svg>
+              <span>{{ .Title }}</span>
+            </a>
+          </li>
+        {{- end -}}
+      </ul>
+    {{- end -}}
+  </div>
+</nav>
